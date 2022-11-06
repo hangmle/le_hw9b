@@ -144,16 +144,27 @@ buttonPara.appendChild(submit);
 buttonPara.appendChild(cancel);
 document.getElementById("myForm").appendChild(buttonPara);
 
+// thank you note
+const note = document.createElement("p");
+note.id = "note";
+document.getElementById("myForm").appendChild(note);
+
 
 document.querySelector("form").addEventListener("submit", e => {
   e.preventDefault();
-  const formElement = new FormData(e.target);
+  // Create a FormData object, passing the form as a parameter
+  const formData = new FormData(e.target);
 
-  // check data in form
-  console.log(`Username: ${e.target.elements.name.value}, email: ${e.target.elements.email.value}, payment: ${e.target.elements.payment.value}, promotion: ${e.target.elements.promotion.value}, location: ${e.target.elements.location.value}`)
-
-  // thank you note
-  const note = document.createElement("p");
-  note.textContent = `${e.target.elements.name.value}, thank you for your order. We will keep you posted on delivery status at ${e.target.elements.email.value}.`
-  document.getElementById("myForm").appendChild(note);
+  // Send form data to the server with an asynchronous POST request
+  fetch("http://localhost:3000/form", {
+    method: "POST",
+    body: formData
+  })
+    .then(response => response.text())
+    .then(result => {
+      document.getElementById("note").textContent = result;
+    })
+    .catch(err => {
+      console.error(err.message);
+    });
 })
